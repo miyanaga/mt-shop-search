@@ -1,0 +1,36 @@
+<__trans_section component="shopsearch">
+<mt:setvar name="page_title" value="<__trans phrase='Update Shops'>">
+
+<mt:include name="include/header.tmpl" id="header_include">
+    
+<p><__trans phrase='Copy all in Excel and paste here.'></p>
+    
+<form name="cfg_form" method="post" action="<mt:var name="script_url">">
+<input type="hidden" name="__mode" value="shopsearch_upload_update" />
+<input type="hidden" name="return_args" value="<mt:var name="return_args" escape="html">" />
+<input type="hidden" name="magic_token" value="<mt:var name="magic_token">" />
+
+<mtapp:setting
+    id="tsv"
+    label_class="field-top-label"
+    label="<__trans phrase='Tab Separated Values'>"
+>
+    <textarea name="tsv" style="width:100%;height:480px"></textarea>
+</mtapp:setting>
+
+<mt:setvarblock name="action_buttons">
+    <button
+        type="submit"
+        accesskey="s"
+        title="<__trans phrase="Update shops data">"
+        class="save action primary button"
+        ><__trans phrase="Start Update"></button>
+</mt:setvarblock>
+
+<mt:include name="include/actions_bar.tmpl" bar_position="bottom" hide_pager="1" settings_bar="1">
+
+</form>
+
+
+<mt:include name="include/footer.tmpl" id="footer_include">
+</__trans_section>

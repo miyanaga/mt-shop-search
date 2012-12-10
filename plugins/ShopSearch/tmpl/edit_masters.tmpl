@@ -1,0 +1,111 @@
+<__trans_section component="shopsearch">
+<mt:setvar name="page_title" value="<__trans phrase='Manage Masters'>">
+
+<mt:setvarblock name="system_msg">
+<mt:if name="error">
+  <mtapp:statusmsg
+     id="generic-error"
+     class="error"
+     can_close="0">
+    <mt:var name="error">
+  </mtapp:statusmsg>
+</mt:if>
+<mt:if name="saved">
+  <mtapp:statusmsg
+     id="saved"
+     class="success"
+     can_close="1">
+    <__trans phrase="Your changes have been saved.">
+  </mtapp:statusmsg>
+</mt:if>
+</mt:setvarblock>
+    
+<mt:setvarblock name="html_head" append="1">
+    <style type="text/css">
+        .masters {
+            clear: both;
+        }
+
+        .master {
+            width: 23%;
+            margin-right: 2%;
+            float: left;
+        }
+
+        .sortable-header h3 {
+            margin-left: 15px;
+        }
+
+        .actions-bar {
+            clear: both;
+        }
+    </style>
+</mt:setvarblock>
+
+<mt:include name="include/header.tmpl" id="header_include">
+    
+<form name="edit_form" id="edit-masters-form" method="post" action="<mt:var name="script_url">">
+<input type="hidden" name="__mode" value="shopsearch_save_masters" />
+<input type="hidden" name="return_args" value="<mt:var name="return_args" escape="html">" />
+<input type="hidden" name="magic_token" value="<mt:var name="magic_token">" />
+
+<mt:setvarblock name="action_buttons">
+    <button
+        type="submit"
+        accesskey="s"
+        title="<__trans phrase="Save masters order">"
+        class="save action primary button"
+        ><__trans phrase="Save Changes"></button>
+</mt:setvarblock>
+
+<div class="masters">
+
+<mt:loop name="masters">
+
+<div class="master">
+    <div class="sortable-header">
+        <h3><mt:var name="label" escape="html"></h3>
+        <input class="orders" type="hidden" name="<mt:var name='key' escape='html'>" id="<mt:var name='key' escape='html'>">
+    </div>    
+    <div id="root">
+        <div class="sortable">
+            <mt:loop name="master">
+                <div class="sortable-item master-item" data-id="<mt:var name='id' escape='html'>">
+                    <span class="sort-tab"></span>
+                    <span class="item-label"><mt:var name="label" escape="html"></span>
+                </div>
+            </mt:loop>
+        </div>
+    </div>
+
+</div>    
+</mt:loop>
+
+</div>
+
+<mt:include name="include/actions_bar.tmpl" bar_position="bottom" hide_pager="1" settings_bar="1">
+
+</form>
+
+<mt:setvarblock name="jq_js_include">
+    jQuery('.sortable').sortable({
+        distance: 3,
+        opacity: 0.8,
+        handle: 'span.sort-tab'
+    });
+    
+    jQuery('#edit-masters-form').submit(function() {
+        jQuery('.master').each(function() {
+            var $master = jQuery(this);
+            var ids = [];
+            $master.find('.sortable-item').each(function() {
+                var id = jQuery(this).attr('data-id');
+                ids.push(id);
+            });
+            $master.find('.orders').val(ids.join(','));
+        });
+    });
+</mt:setvarblock>
+
+<mt:include name="include/footer.tmpl" id="footer_include">
+</__trans_section>

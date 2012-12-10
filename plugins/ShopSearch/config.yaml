@@ -1,0 +1,109 @@
+name: ShopSearch
+id: ShopSearch
+key: ShopSearch
+author_link: http://www.ideamans.com/
+author_name: ideaman's Inc.
+version: 1.00
+schema_version: 0.18
+l10n_class: MT::ShopSearch::L10N
+
+object_types:
+    shopsearch_shop: MT::ShopSearch::Shop
+    shopsearch_brand: MT::ShopSearch::Brand
+    shopsearch_category: MT::ShopSearch::Category
+    shopsearch_prefecture: MT::ShopSearch::Prefecture
+    shopsearch_tenant: MT::ShopSearch::Tenant
+    shopsearch_shop_category: MT::ShopSearch::ShopCategory
+    shopsearch_shop_brand: MT::ShopSearch::ShopBrand
+
+callbacks:
+    init_app: $ShopSearch::MT::ShopSearch::Core::init
+
+permissions:
+    system.manage_shopsearch:
+        group: sys_admin
+        label: Manage Shop Search
+        order: 2000
+
+applications:
+    new_search:
+        methods:
+            shopsearch_ajax_masters: $ShopSearch::MT::ShopSearch::Search::ajax_masters
+            shopsearch_ajax_search: $ShopSearch::MT::ShopSearch::Search::ajax_search
+            shopsearch: $ShopSearch::MT::ShopSearch::Search::search_form
+            shopsearch_search: $ShopSearch::MT::ShopSearch::Search::do_search
+    cms:
+        methods:
+            shopsearch_start_update: $ShopSearch::MT::ShopSearch::CMS::start_update
+            shopsearch_upload_update: $ShopSearch::MT::ShopSearch::CMS::upload_update
+            shopsearch_do_update: $ShopSearch::MT::ShopSearch::CMS::do_update
+            shopsearch_edit_masters: $ShopSearch::MT::ShopSearch::CMS::edit_masters
+            shopsearch_save_masters: $ShopSearch::MT::ShopSearch::CMS::save_masters
+            shopsearch_shop_priority: $ShopSearch::MT::ShopSearch::CMS::shop_priority
+        menus:
+            shopsearch:
+                label: Shop Search
+                order: 2000
+                view: system
+                system_permission: manage_shopsearch
+            shopsearch:manage:
+                label: Manage
+                order: 100
+                mode: list
+                args:
+                    _type: shopsearch_shop
+                view: system
+                system_permission: manage_shopsearch
+            shopsearch:update:
+                label: Update
+                order: 200
+                mode: shopsearch_start_update
+                view: system
+                system_permission: manage_shopsearch
+            shopsearch:edit_masters:
+                label: Sort Masters
+                order: 300
+                mode: shopsearch_edit_masters
+                view: system
+                system_permission: manage_shopsearch
+
+default_templates:
+    base_path: templates
+    global:system:
+        shopsearch:
+            label: Shop Search
+    global:module:
+        shopsearch_result:
+            label: Shop Search Result
+
+listing_screens:
+    shopsearch_shop:
+        primary: name
+        default_sort_key: name
+
+list_properties:
+    shopsearch_shop: $ShopSearch::MT::ShopSearch::Shop::list_props
+
+list_actions:
+    shopsearch_shop: $ShopSearch::MT::ShopSearch::CMS::list_actions
+
+shopsearch:
+    single_masters:
+        shopsearch_brand:
+            enabled: 1
+            label: Brand
+            label_plural: Brands
+        shopsearch_tenant:
+            enabled: 1
+            label: Tenant
+            label_plural: Tenants
+        shopsearch_prefecture:
+            enabled: 1
+            label: Prefecture
+            label_plural: Prefectures
+    multi_masters:
+        shopsearch_category:
+            enabled: 1
+            relation: shopsearch_shop_category
+            label: Category
+            label_plural: Categories
