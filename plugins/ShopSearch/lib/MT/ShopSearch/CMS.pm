@@ -59,11 +59,11 @@ sub edit_masters {
             label => plugin->translate('Prefecture'),
             master => [],
         },
-        {
-            key => 'shopsearch_tenant',
-            label => plugin->translate('Tenant'),
-            master => [],
-        },
+        # {
+        #     key => 'shopsearch_tenant',
+        #     label => plugin->translate('Tenant'),
+        #     master => [],
+        # },
         {
             key => 'shopsearch_brand',
             label => plugin->translate('Brand'),
@@ -102,16 +102,18 @@ sub save_masters {
 
     my @masters = (
         'shopsearch_prefecture',
-        'shopsearch_tenant',
+#        'shopsearch_tenant',
         'shopsearch_brand',
         'shopsearch_category',
     );
 
+    my %priorities;
     for my $m ( @masters ) {
         my %map = map {
             $_->id => $_
         } MT->model($m)->load({enabled => 1});
 
+        $priorities{$m} = {};
         my @ids = split(/\s*,\s*/, $q->param($m));
         my $i = scalar @ids;
         for my $id ( @ids ) {
@@ -119,6 +121,17 @@ sub save_masters {
             my $obj = $map{$id} || next;
             $obj->priority($i);
             $obj->save;
+
+            $priorities{$m}->{$id} = $i;
+        }
+    }
+
+    # Update shop base priority
+    my $priorities = $priorities{shopsearch_prefecture};
+    if ( my $iter = MT->model('shopsearch_shop')->load_iter ) {
+        while ( my $shop = $iter->() ) {
+            $shop->base_priority($priorities->{$shop->shopsearch_prefecture_id} || 0);
+            $shop->save;
         }
     }
 

@@ -10,6 +10,7 @@ __PACKAGE__->install_properties({
         id              => 'integer not null auto_increment',
         key             => 'string(128)',
         name            => 'string(255)',
+        base_priority   => 'integer',
         priority        => 'integer',
         postal          => 'string(32)',
         shopsearch_prefecture_id
@@ -24,7 +25,7 @@ __PACKAGE__->install_properties({
         timestamp       => 'float',
     },
     indexes => {
-        priority        => 1,
+        priority        => { columns => [qw/base_priority priority/] },
         key             => 1,
         shopsearch_prefecture_id
                         => 1,
@@ -273,7 +274,12 @@ sub search_by_param {
     my ( $cond ) = @_;
 
     my %terms;
-    my %args = ( sort => 'priority', direction => 'descend' );
+    my %args = (
+        sort => [
+            { column => 'base_priority', desc => 'DESC' },
+            { column => 'priority', desc => 'DESC' },
+        ],
+    );
 
     # Name
     $terms{name} = $cond->{shopsearch_name}
