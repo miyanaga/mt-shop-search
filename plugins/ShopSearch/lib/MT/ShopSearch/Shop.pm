@@ -275,6 +275,10 @@ sub search_by_param {
     my %terms;
     my %args = ( sort => 'priority', direction => 'descend' );
 
+    # Name
+    $terms{name} = $cond->{shopsearch_name}
+        if $cond->{shopsearch_name};
+
     # Single master
     for my $master ( qw/shopsearch_tenant shopsearch_prefecture/ ) {
         my $col = $master . '_id';

@@ -69,7 +69,7 @@ sub search_form {
     my %params = $app->param_hash;
     $params{paging} = 1 unless defined $params{paging};
 
-    $params{rows} = _search_shop($app, \%params);
+    $params{rows} = _search_shop($app, \%params) if $params{search};
     $params{masters} = _load_masters($app, \%params);
 
     my $tmpl = MT->model('template')->load({

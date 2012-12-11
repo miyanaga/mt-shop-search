@@ -88,6 +88,10 @@ subtest 'Added Shops' => sub {
         is count_search_shop({ brand => 'コムサデモード', category => 'レディス'}), 2, 'コムサデモード and レディス';
         is count_search_shop({ brand => 'コムサデモード', category => 'レディス', q => '婦人服'}), 2, 'コムサデモード and レディス and 婦人服';
     };
+
+    subtest 'Search Name' => sub {
+        is count_search_shop({ shopsearch_name => 'コムサプラチナ' }), 1;
+    }
 };
 
  subtest 'Only One Shop' => sub {
