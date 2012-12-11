@@ -75,7 +75,7 @@ sub ajax_search {
     $app->json_result(\%params);
 }
 
-sub do_search {
+sub search_result {
     my $app = shift;
     my %params = $app->param_hash;
     $params{paging} = 1 unless defined $params{paging};
@@ -85,7 +85,7 @@ sub do_search {
     my $tmpl = MT->model('template')->load({
         blog_id => 0,
         type => 'custom',
-        identifier => 'search_result',
+        identifier => 'shopsearch_result',
     });
 
     $tmpl->param(\%params);

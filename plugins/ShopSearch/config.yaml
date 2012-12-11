@@ -31,7 +31,7 @@ applications:
             shopsearch_ajax_masters: $ShopSearch::MT::ShopSearch::Search::ajax_masters
             shopsearch_ajax_search: $ShopSearch::MT::ShopSearch::Search::ajax_search
             shopsearch: $ShopSearch::MT::ShopSearch::Search::search_form
-            shopsearch_search: $ShopSearch::MT::ShopSearch::Search::do_search
+            shopsearch_result: $ShopSearch::MT::ShopSearch::Search::search_result
     cms:
         methods:
             shopsearch_start_update: $ShopSearch::MT::ShopSearch::CMS::start_update
