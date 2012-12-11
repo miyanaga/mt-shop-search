@@ -236,7 +236,7 @@ sub sync_from_tsv {
         my @categories =  split(/\s*,\s*/, $cols{categories});
 
         # Name
-        $values{name} = join(' ', $shop_name, $tenant);
+        $values{name} = $shop_name;
 
         # Addresses
         $values{postal} = $cols{postal} or $alert->($line_num, "No postal"), next;
