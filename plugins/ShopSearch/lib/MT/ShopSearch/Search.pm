@@ -37,11 +37,27 @@ sub _search_shop {
 
     my @shops = MT->model('shopsearch_shop')->search_by_param($params);
     my @rows = map {
+        my @categories = $_->categories;
+        my @brands = $_->brands;
+        my $prefecture = $_->prefecture;
+        my $tenant = $_->tenant;
+
         {
-            id      => $_->id,
-            name    => $_->name,
-            map_address => $_->map_address,
-            full_address => $_->full_address,
+            id      => $_->id || 0,
+            name    => $_->name || '',
+            tel     => $_->tel || '',
+            postal  => $_->postal || '',
+            map_address => $_->map_address || '',
+            full_address => $_->full_address || '',
+            categories => [ map {
+                { id => $_->id, name => $_->name }
+            } @categories ],
+            brands => [ map {
+                { id => $_->id, name => $_->name }
+            } @brands ],
+            prefecture => $prefecture ? $prefecture->name : '',
+            tenant => $tenant ? $tenant->name : '',
+            comment => $_->comment || '',            
         }
     } @shops;
 
