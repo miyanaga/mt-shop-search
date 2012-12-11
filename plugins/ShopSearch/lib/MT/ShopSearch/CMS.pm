@@ -90,9 +90,9 @@ sub edit_masters {
     }
 
     plugin->load_tmpl('edit_masters.tmpl', {
-        saved => $q->param('saved'),
-        masters => \@masters }
-    );
+        saved => $q->param('saved') || 0,
+        masters => \@masters,
+    });
 }
 
 sub save_masters {
