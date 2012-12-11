@@ -331,10 +331,6 @@ sub search_by_param {
 
         # Overflow
         my $pages = $cond->{pages};
-        if ( $page_number > $pages ) {
-            $page_number = $pages;
-            $page = $page_number - 1;        
-        }
 
         # Feedback actual page
         $cond->{page} = $page;
