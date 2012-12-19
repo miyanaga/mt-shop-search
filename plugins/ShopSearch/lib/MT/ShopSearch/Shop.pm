@@ -290,7 +290,7 @@ sub search_by_param {
         my $col = $master . '_id';
         if ( my $text = delete $cond->{$master} ) {
             my $id = MT->model($master)->id_of($text);
-            $cond->{$col} = $id if $id;
+            $cond->{$col} = $id || 0;
         }
         $terms{$col} = $cond->{$col} if $cond->{$col};
     }
@@ -300,7 +300,7 @@ sub search_by_param {
         my $col = $master . '_id';
         if ( my $text = delete $cond->{$master} ) {
             my $id = MT->model($master)->id_of($text);
-            $cond->{$col} = $id if $id;
+            $cond->{$col} = $id || 0;
         }
     }
 
@@ -308,7 +308,8 @@ sub search_by_param {
     for my $model ( qw/shopsearch_shop_category shopsearch_shop_brand/ ) {
         my $class = MT->model($model);
         my $col = $class->master_column;
-        my $master_id = $cond->{$col} || next;
+        next unless defined $cond->{$col};
+        my $master_id = $cond->{$col};
 
         push @ids, $class->shop_ids_for($master_id);
     }
