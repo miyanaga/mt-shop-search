@@ -290,7 +290,7 @@ sub search_by_param {
         my $col = $master . '_id';
         if ( my $text = delete $cond->{$master} ) {
             my $id = MT->model($master)->id_of($text);
-            $cond->{$col} = $id if $id;
+            $cond->{$col} = $id || 0;
         }
         $terms{$col} = $cond->{$col} if $cond->{$col};
     }
@@ -300,7 +300,7 @@ sub search_by_param {
         my $col = $master . '_id';
         if ( my $text = delete $cond->{$master} ) {
             my $id = MT->model($master)->id_of($text);
-            $cond->{$col} = $id if $id;
+            $cond->{$col} = $id || 0;
         }
     }
 
