@@ -308,8 +308,7 @@ sub search_by_param {
     for my $model ( qw/shopsearch_shop_category shopsearch_shop_brand/ ) {
         my $class = MT->model($model);
         my $col = $class->master_column;
-        next unless defined $cond->{$col};
-        my $master_id = $cond->{$col};
+        my $master_id = $cond->{$col} || next;
 
         push @ids, $class->shop_ids_for($master_id);
     }
