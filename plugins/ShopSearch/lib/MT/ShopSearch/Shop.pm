@@ -290,7 +290,11 @@ sub search_by_param {
         my $col = $master . '_id';
         if ( my $text = delete $cond->{$master} ) {
             my $id = MT->model($master)->id_of($text);
-            $cond->{$col} = $id || 0;
+            unless ( $id ) {
+                $terms{id} = [0];
+                goto SEARCH;
+            }
+            $cond->{$col} = $id;
         }
         $terms{$col} = $cond->{$col} if $cond->{$col};
     }
@@ -300,7 +304,11 @@ sub search_by_param {
         my $col = $master . '_id';
         if ( my $text = delete $cond->{$master} ) {
             my $id = MT->model($master)->id_of($text);
-            $cond->{$col} = $id || 0;
+            $cond->{$col} = $id;
+            unless ( $id ) {
+                $terms{id} = [0];
+                goto SEARCH;
+            }
         }
     }
 
@@ -322,6 +330,8 @@ sub search_by_param {
     if ( my $q = $cond->{q} ) {
         $terms{keywords} = { like => join('', '%', $q, '%') };
     }
+
+    SEARCH:
 
     # Paging
     if ( $cond->{paging} ) {

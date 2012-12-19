@@ -25,8 +25,7 @@ sub count_search_shop {
     my $param = shift;
     for my $master ( qw/tenant prefecture brand category/ ) {
         my $name = delete $param->{$master} || next;
-        my $obj = MT->model("shopsearch_${master}")->load({name => $name}) || next;
-        $param->{"shopsearch_${master}_id"} = $obj->id;
+        $param->{"shopsearch_${master}"} = $name;
     }
     my @shops = MT->model('shopsearch_shop')->search_by_param($param);
     scalar @shops;
@@ -76,6 +75,10 @@ subtest 'Added Shops' => sub {
         is count_search_shop({ tenant => '新宿伊勢丹'}), 2, '新宿伊勢丹';
         is count_search_shop({ prefecture => '東京都'}), 13, '東京都';
         is count_search_shop({ category => 'レディース'}), 1, 'レディース';
+        is count_search_shop({ brand => 'コムサデモード'}), 4, 'コムサデモード';
+        is count_search_shop({ prefecture => '不明'}), 0, 'マスタにない都道府県';
+        is count_search_shop({ category => '不明'}), 0, 'マスタにないカテゴリ';
+        is count_search_shop({ brand => '不明'}), 0, 'マスタにないブランド';
     };
 
     subtest 'Search Keyword' => sub {
