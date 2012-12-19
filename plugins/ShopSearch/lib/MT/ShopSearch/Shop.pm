@@ -311,11 +311,7 @@ sub search_by_param {
         next unless defined $cond->{$col};
         my $master_id = $cond->{$col};
 
-        if ( $master_id ) {
-            push @ids, $class->shop_ids_for($master_id);
-        } else {
-            push @ids, 0;
-        }
+        push @ids, $class->shop_ids_for($master_id);
     }
 
     if ( @ids ) {
