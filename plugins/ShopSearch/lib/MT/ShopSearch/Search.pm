@@ -45,7 +45,7 @@ sub _search_shop {
         {
             id      => $_->id || 0,
             name    => $_->name || '',
-            diaplay_name => $_->display_name || '',
+            display_name => $_->display_name || '',
             tel     => $_->tel || '',
             postal  => $_->postal || '',
             map_address => $_->map_address || '',
