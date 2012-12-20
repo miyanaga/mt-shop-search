@@ -11,7 +11,7 @@ __PACKAGE__->install_properties({
         key             => 'string(128)',
         name            => 'string(255)',
         display_name    => 'string(255)',
-        base_priority   => 'integer',
+        line_index      => 'integer',
         priority        => 'integer',
         postal          => 'string(32)',
         shopsearch_prefecture_id
@@ -26,7 +26,7 @@ __PACKAGE__->install_properties({
         timestamp       => 'float',
     },
     indexes => {
-        priority        => { columns => [qw/base_priority priority/] },
+        priority        => { columns => [qw/priority line_index/] },
         name            => 1,
         key             => 1,
         shopsearch_prefecture_id
@@ -262,6 +262,9 @@ sub sync_from_tsv {
         # Priority
         $values{priority} = eval { int($cols{priority}) } || 0;
 
+        # Line Number
+        $values{line_index} = $line_num;
+
         # Shop Object
         my $shop = MT->model('shopsearch_shop')->ensure($key);
         $shop->set_values(\%values);
@@ -285,8 +288,8 @@ sub search_by_param {
     my %terms;
     my %args = (
         sort => [
-            { column => 'base_priority', desc => 'DESC' },
             { column => 'priority', desc => 'DESC' },
+            { column => 'line_index', desc => 'ASC' },
         ],
     );
 
