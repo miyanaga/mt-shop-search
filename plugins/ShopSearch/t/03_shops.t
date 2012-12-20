@@ -165,6 +165,31 @@ subtest 'Only One Shop' => sub {
         is( MT->model('shopsearch_brand')->count, 39 );
         is( MT->model('shopsearch_category')->count, 21 );
     };
+
+    subtest 'Before Update' => sub {
+        my $shop = MT->model('shopsearch_shop')->load;
+        is $shop->tenant->name, '東急東横';
+        is $shop->prefecture->name, '東京都';
+
+        my $brands = join( ',', map { $_->name } @{$shop->brands} );
+        is $brands, 'コムサデモード,KT';
+
+        my $categories = join( ',', map { $_->name } @{$shop->categories} );
+        is $categories, 'レディス';
+    };
+};
+
+subtest 'Update masters' => sub {
+    my $tsv = load_data_file('shops_update_one.tsv');
+
+    MT->model('shopsearch_shop')->sync_from_tsv($tsv, 1);
+    is( MT->model('shopsearch_shop')->count, 1 );
+
+    subtest 'After Update' => sub {
+        my $shop = MT->model('shopsearch_shop')->load;
+        is $shop->tenant->name, 'ステラプレイス';
+        is $shop->prefecture->name, '神奈川県';
+    };
 };
 
 done_testing;
