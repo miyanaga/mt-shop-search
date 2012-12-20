@@ -57,6 +57,26 @@ subtest 'Initial Shops' => sub {
     is( MT->model('shopsearch_shop_category')->count, 58 );
 };
 
+subtest 'Initial priority' => sub {
+    my $shop;
+
+    $shop = MT->model('shopsearch_shop')->load({tel => '03-5954-8042'});
+    is $shop->name, 'コムサプラチナ';
+    is $shop->priority, 0;
+
+    $shop = MT->model('shopsearch_shop')->load({tel => '03-5367-3165'});
+    is $shop->name, 'コムサ&K.T';
+    is $shop->priority, 0;
+
+    $shop = MT->model('shopsearch_shop')->load({tel => '022-716-2236'});
+    is $shop->name, 'ギャバジンK.T コムサデモード';
+    is $shop->priority, 0;
+
+    $shop = MT->model('shopsearch_shop')->load({tel => '082-502-3620'});
+    is $shop->name, 'ギャバジンK.T＋';
+    is $shop->priority, 0;
+};
+
 subtest 'Added Shops' => sub {
     my $tsv = load_data_file('shops_added.tsv');
 
@@ -97,7 +117,36 @@ subtest 'Added Shops' => sub {
     }
 };
 
- subtest 'Only One Shop' => sub {
+subtest 'Added priority' => sub {
+    my $shop;
+
+    $shop = MT->model('shopsearch_shop')->load({tel => '03-5954-8042'});
+    is $shop->name, 'コムサプラチナ';
+    is $shop->priority, 5;
+
+    $shop = MT->model('shopsearch_shop')->load({tel => '03-5367-3165'});
+    is $shop->name, 'コムサ&K.T';
+    is $shop->priority, 4;
+
+    $shop = MT->model('shopsearch_shop')->load({tel => '022-716-2236'});
+    is $shop->name, 'ギャバジンK.T コムサデモード';
+    is $shop->priority, 3;
+
+    $shop = MT->model('shopsearch_shop')->load({tel => '082-502-3620'});
+    is $shop->name, 'ギャバジンK.T＋';
+    is $shop->priority, 0;
+};
+
+subtest 'Added comment and display name' => sub {
+    my $shop;
+    $shop = MT->model('shopsearch_shop')->load({tel => '0954-63-9488'});
+    is $shop->name, 'コムサイズム';
+    is $shop->comment, '※メンバーズカードシステムに違いがございます。'; 
+    is $shop->display_name, 'DISPLAY';
+};
+
+
+subtest 'Only One Shop' => sub {
     my $tsv = load_data_file('shops_only_one.tsv');
 
     MT->model('shopsearch_shop')->sync_from_tsv($tsv);

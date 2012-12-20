@@ -10,6 +10,7 @@ __PACKAGE__->install_properties({
         id              => 'integer not null auto_increment',
         key             => 'string(128)',
         name            => 'string(255)',
+        display_name    => 'string(255)',
         base_priority   => 'integer',
         priority        => 'integer',
         postal          => 'string(32)',
@@ -26,6 +27,7 @@ __PACKAGE__->install_properties({
     },
     indexes => {
         priority        => { columns => [qw/base_priority priority/] },
+        name            => 1,
         key             => 1,
         shopsearch_prefecture_id
                         => 1,
@@ -178,6 +180,7 @@ sub sync_from_tsv {
     my %cols = (
         priority        => excel_column_index('A'),
         shop            => excel_column_index('B'),
+        display_name    => excel_column_index('Q'),
         tenant          => excel_column_index('C'),
         tenant_kana     => excel_column_index('D'),
         prefecture      => excel_column_index('M'),
@@ -239,6 +242,12 @@ sub sync_from_tsv {
         # Name
         $values{name} = $shop_name;
 
+        # Display Name
+        $values{display_name} = $cols{display_name};
+
+        # Comment
+        $values{comment} = $cols{comment};
+
         # Addresses
         $values{postal} = $cols{postal} or $alert->($line_num, "No postal"), next;
         $values{map_address} = $prefecture . $cols{address1};
@@ -251,7 +260,7 @@ sub sync_from_tsv {
         );
 
         # Priority
-        $values{priority} = $cols{priority} || 0;
+        $values{priority} = eval { int($cols{priority}) } || 0;
 
         # Shop Object
         my $shop = MT->model('shopsearch_shop')->ensure($key);
