@@ -126,15 +126,6 @@ sub save_masters {
         }
     }
 
-    # Update shop base priority
-    my $priorities = $priorities{shopsearch_prefecture};
-    if ( my $iter = MT->model('shopsearch_shop')->load_iter ) {
-        while ( my $shop = $iter->() ) {
-            $shop->base_priority($priorities->{$shop->shopsearch_prefecture_id} || 0);
-            $shop->save;
-        }
-    }
-
     $app->redirect(
         $app->uri( mode => 'shopsearch_edit_masters', args => { saved => 1 } )
     );
