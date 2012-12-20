@@ -96,7 +96,6 @@ sub _multi_master {
             $rel->order($i++);
             $rel->save;
         }
-
         return;
     }
 
@@ -106,6 +105,7 @@ sub _multi_master {
     } MT->model($relation)->load({
         shopsearch_shop_id => $self->id,
     });
+
     my @masters = MT->model($model)->load({
         id => [keys %rel_ids],
     });
