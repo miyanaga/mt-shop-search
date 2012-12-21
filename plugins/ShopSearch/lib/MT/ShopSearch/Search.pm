@@ -68,7 +68,7 @@ sub _search_shop {
 sub search_form {
     my $app = shift;
     my %params = $app->param_hash;
-    $params{paging} = 1 unless defined $params{paging};
+    # $params{paging} = 1 unless defined $params{paging};
 
     $params{rows} = _search_shop($app, \%params) if $params{search};
     $params{masters} = _load_masters($app, \%params);
@@ -85,7 +85,7 @@ sub search_form {
 sub ajax_search {
     my $app = shift;
     my %params = $app->param_hash;
-    $params{paging} = 1 unless defined $params{paging};
+    # $params{paging} = 1 unless defined $params{paging};
 
     $params{rows} = _search_shop($app, \%params);
 
@@ -95,9 +95,22 @@ sub ajax_search {
 sub search_result {
     my $app = shift;
     my %params = $app->param_hash;
-    $params{paging} = 1 unless defined $params{paging};
+    # $params{paging} = 1 unless defined $params{paging};
 
     $params{rows} = _search_shop($app, \%params);
+
+    # Name matching has priority.
+    if ( my $name = $params{shopsearch_name} ) {
+        my ( @above, @bellow );
+        for my $row ( @{$params{rows}} ) {
+            if ( $row->{name} eq $name ) {
+                push @above, $row;
+            } else {
+                push @bellow, $row;
+            }
+        }
+        $params{rows} = [@above, @bellow];
+    }
 
     my $tmpl = MT->model('template')->load({
         blog_id => 0,
@@ -112,7 +125,7 @@ sub search_result {
 sub ajax_masters {
     my $app = shift;
     my %params = $app->param_hash;
-    $params{paging} = 1 unless defined $params{paging};
+    # $params{paging} = 1 unless defined $params{paging};
 
     my $masters = _load_masters($app, \%params);
 
