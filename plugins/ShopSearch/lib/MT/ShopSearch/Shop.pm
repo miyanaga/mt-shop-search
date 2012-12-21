@@ -2,6 +2,7 @@ package MT::ShopSearch::Shop;
 
 use strict;
 use base qw(MT::Object);
+use MT::Util;
 use MT::ShopSearch::Util;
 use Time::HiRes qw(time);
 
@@ -386,26 +387,114 @@ sub list_props {
     return {
         priority => {
             auto        => 1,
-            base        => '__virtual.integer',
-            display     => 'force',
+            display     => 'default',
+            order       => 100,
+            label       => 'Priority',
+            col_class   => 'id',
+        },
+        line_index => {
+            auto        => 1,
+            display     => 'default',
+            order       => 150,
+            label       => 'Line Number',
+            col_class   => 'id',
         },
         name => {
             auto        => 1,
             label       => 'Shop Name',
+            col_class   => 'string',
             display     => 'force',
             order       => 200,
         },
-        shopsearch_prefecture_id => {
+        brands => {
+            label       => 'Brand',
+            display     => 'force',
+            order       => 240,
+            html        => sub {
+                my ($lp, $obj) = @_;
+                '<ul>' . join('', map {
+                    '<li>' . MT::Util::encode_html($_->name) . '</li>'
+                } grep { $_->name } $obj->brands) . '</ul>';
+            },
+            col_class   => 'num',
+        },
+        categories => {
+            label       => 'Category',
+            display     => 'force',
+            order       => 250,
+            html        => sub {
+                my ($lp, $obj) = @_;
+                '<ul>' . join('', map {
+                    '<li>' . MT::Util::encode_html($_->name) . '</li>'
+                } grep { $_->name } $obj->categories) . '</ul>';
+            },
+            col_class   => 'num',
+        },
+        comment => {
             auto        => 1,
-            label       => 'Prefecture',
+            label       => 'Comment',
+            display     => 'default',
+            order       => 270,
+            col_class   => 'primary',
+        },
+        keywords => {
+            auto        => 1,
+            label       => 'Search Keyword',
+            display     => 'default',
+            order       => 280,
+            col_class   => 'primary',
+        },
+        shopsearch_prefecture_id => {
             base        => '__virtual.single_select',
+            label       => 'Prefecture',
             display     => 'default',
             order       => 300,
-            single_select_options => [
-                map {
+            single_select_options => sub {
+                my @masters = map {
                     { label => $_->name, value => $_->id }
-                } MT->model('shopsearch_prefecture')->load({enabled => 1})
-            ],
+                } MT->model('shopsearch_prefecture')->load({enabled => 1});
+                \@masters;
+            },
+            bulk_html   => sub {
+                my $lp = shift;
+                my ( $objs, $app ) = @_;
+                my %masters = map {
+                    $_->id => $_->name
+                } MT->model('shopsearch_prefecture')->load();
+
+                my @htmls = map {
+                    MT::Util::encode_html( $masters{$_->id} || '' )
+                } @$objs;
+
+                @htmls;
+            },
+            col_class => 'num',
+        },
+        shopsearch_tenant_id => {
+            base        => '__virtual.single_select',
+            label       => 'Tenant',
+            display     => 'default',
+            order       => 310,
+            single_select_options => sub {
+                my @masters = map {
+                    { label => $_->name, value => $_->id }
+                } MT->model('shopsearch_tenant')->load({enabled => 1});
+                \@masters;
+            },
+            bulk_html   => sub {
+                my $lp = shift;
+                my ( $objs, $app ) = @_;
+                my %masters = map {
+                    $_->id => $_->name
+                } MT->model('shopsearch_tenant')->load();
+
+                my @htmls = map {
+                    MT::Util::encode_html( $masters{$_->id} || '' )
+                } @$objs;
+
+                @htmls;
+            },
+            col_class => 'string',
         },
         full_address => {
             auto        => 1,
@@ -413,6 +502,33 @@ sub list_props {
             display     => 'default',
             order       => 400,
             col_class   => 'primary',
+        },
+        map_address => {
+            auto        => 1,
+            label       => 'Map Address',
+            display     => 'default',
+            order       => 450,
+            col_class   => 'primary',
+        },
+        map => {
+            label       => 'Map',
+            display     => 'default',
+            order       => 500,
+            html        => sub {
+                my ( $prop, $obj ) = @_;
+                return '' unless $obj->map_address;
+                my $q = MT::Util::encode_url($obj->map_address);
+                return join('',
+                    '<a target="_blank" href="http://maps.google.com?q=',
+                        $q,
+                    '">',
+                        '<img src="//maps.google.com/maps/api/staticmap?zoom=16&amp;size=150x150&amp;center=',
+                            $q,
+                        '&amp;markers=',
+                            $q,
+                        '&amp;sensor=false">',
+                    '</a>');
+            },
         },
     };
 }

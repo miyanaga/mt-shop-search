@@ -1,9 +1,10 @@
 <__trans_section component="shopsearch">
 <mt:setvar name="page_title" value="<__trans phrase='Update Shops'>">
+<mt:setvar name="screen_group" value="shopsearch">
 
 <mt:include name="include/header.tmpl" id="header_include">
     
-<p><__trans phrase='Copy all in Excel and paste here.'></p>
+<p><__trans phrase='Copy all in sheet of Excel and paste here.'></p>
     
 <form name="cfg_form" method="post" action="<mt:var name="script_url">">
 <input type="hidden" name="__mode" value="shopsearch_upload_update" />
@@ -13,7 +14,7 @@
 <mtapp:setting
     id="tsv"
     label_class="field-top-label"
-    label="<__trans phrase='Tab Separated Values'>"
+    label="<__trans phrase='TSV(Tab Separated Values)'>"
 >
     <textarea name="tsv" style="width:100%;height:480px"></textarea>
 </mtapp:setting>

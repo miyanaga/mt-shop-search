@@ -1,6 +1,7 @@
 package MT::ShopSearch::CMS;
 
 use strict;
+use Encode;
 use MT::ShopSearch::Util;
 
 sub _check_context {
@@ -27,25 +28,33 @@ sub upload_update {
 
     my $q = $app->param;
     my $tsv = $q->param('tsv');
+
     upload_tsv($tsv);
 
-    MT::log($app->config->TempDir);
-
     plugin->load_tmpl('updating.tmpl', {
-        next_uri => $app->uri( mode => 'shopsearch_do_update' ),
+        next_uri => $app->uri(
+            mode => 'shopsearch_do_update',
+        ),
     });
 }
 
 sub do_update {
     my $app = shift;
+    my $q = $app->param;
     my $user = $app->user || return $app->errtrans('Invalid request');
     return $app->permission_denied if !$user->is_superuser && !$user->can_manage_shopsearch;
     return $app->return_to_dashboard( redirect => 1 ) if $app->blog;
 
     my $tsv = upload_tsv;
-    MT->model('shopsearch_shop')->sync_from_tsv($tsv);
 
-    plugin->load_tmpl('finish_update.tmpl');
+    my $before = MT->model('shopsearch_shop')->count || 0;
+    MT->model('shopsearch_shop')->sync_from_tsv($tsv);
+    my $after = MT->model('shopsearch_shop')->count || 0;
+
+    plugin->load_tmpl('finish_update.tmpl', {
+        before => $before,
+        after => $after,
+    });
 }
 
 sub edit_masters {
