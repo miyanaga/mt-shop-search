@@ -99,19 +99,6 @@ sub search_result {
 
     $params{rows} = _search_shop($app, \%params);
 
-    # Name matching has priority.
-    if ( my $name = $params{shopsearch_name} ) {
-        my ( @above, @bellow );
-        for my $row ( @{$params{rows}} ) {
-            if ( $row->{name} eq $name ) {
-                push @above, $row;
-            } else {
-                push @bellow, $row;
-            }
-        }
-        $params{rows} = [ ( @above, @bellow ) ];
-    }
-
     my $tmpl = MT->model('template')->load({
         blog_id => 0,
         type => 'custom',
