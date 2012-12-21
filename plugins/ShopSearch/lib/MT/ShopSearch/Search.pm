@@ -109,7 +109,7 @@ sub search_result {
                 push @bellow, $row;
             }
         }
-        $params{rows} = [@above, @bellow];
+        $params{rows} = [ ( @above, @bellow ) ];
     }
 
     my $tmpl = MT->model('template')->load({
