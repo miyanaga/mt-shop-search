@@ -80,12 +80,13 @@ listing_screens:
     shopsearch_shop:
         primary: name
         default_sort_key: name
+        page_label: List Shops
 
 list_properties:
     shopsearch_shop: $ShopSearch::MT::ShopSearch::Shop::list_props
 
-list_actions:
-    shopsearch_shop: $ShopSearch::MT::ShopSearch::CMS::list_actions
+# list_actions:
+#     shopsearch_shop: $ShopSearch::MT::ShopSearch::CMS::list_actions
 
 shopsearch:
     single_masters:

@@ -1,9 +1,17 @@
 <__trans_section component="shopsearch">
 <mt:setvar name="page_title" value="<__trans phrase='Updating Finished'>">
+<mt:setvar name="screen_group" value="shopsearch">
+    
+<mt:setvarblock name="content_header">
+<ul id="content-actions" class="action-link-list">
+    <li class="icon-left icon-related"><a href="<mt:var name='script_url'>?__mode=list&amp;_type=shopsearch_shop"><__trans phrase="List Shops"></a></li>
+    <li class="icon-left icon-related"><a href="<mt:var name='script_url'>?__mode=shopsearch_edit_masters"><__trans phrase="Sort Masters"></a></li>
+</ul>
+</mt:setvarblock>
 
 <mt:include name="include/header.tmpl" id="header_include">
     
-<p><__trans phrase='Updated shops:'> <mt:var name="shops_count" _default="0"> <__trans phrase="shops"></p>
-
+<p><__trans phrase="Shops updated from [_1] to [_2] shop(s)." params="<mt:var name='before'>%%<mt:var name='after'>"></p>
+    
 <mt:include name="include/footer.tmpl" id="footer_include">
 </__trans_section>
