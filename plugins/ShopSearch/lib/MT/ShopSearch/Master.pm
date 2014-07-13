@@ -70,20 +70,50 @@ sub load_iter {
     $pkg->SUPER::load_iter($terms, $args, @_);
 }
 
+sub request_cache {
+    my $pkg = shift;
+    my $cache = MT::Request->instance->cache("$pkg.cache");
+    unless ( $cache ) {
+        MT::Request->instance->cache("$pkg.cache", $cache = {});
+    }
+
+    $cache;
+}
+
+sub cache_preload {
+    my $pkg = shift;
+    my $cache = $pkg->request_cache;
+
+    $cache->{$_->name} = $_ foreach $pkg->load;
+}
+
 sub ensure {
     my $pkg = shift;
     my ( $name ) = @_;
     $name or return;
 
-    my $obj = $pkg->load({name => $name});
-    unless ( $obj ) {
-        $obj = $pkg->new;
-        $obj->name($name);
-        $obj->priority(0);
+    my $cache = $pkg->request_cache;
+
+    my $obj;
+    if ( $cache->{$name} ) {
+        $obj = $cache->{$name};
+    } else {
+        $obj = $pkg->load({name => $name});
+        unless ( $obj ) {
+            $obj = $pkg->new;
+            $obj->name($name);
+            $obj->priority(0);
+            $obj->enabled(1);
+            $obj->save;
+        }
     }
 
-    $obj->enabled(1);
-    $obj->save;
+    unless ( $obj->enabled ) {
+        $obj->enabled(1);
+        $obj->save;
+    }
+
+    $cache->{$name} = $obj;
 
     $obj;
 }

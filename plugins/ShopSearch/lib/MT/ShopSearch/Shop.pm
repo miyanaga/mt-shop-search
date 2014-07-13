@@ -25,6 +25,7 @@ __PACKAGE__->install_properties({
         keywords        => 'text',
         comment         => 'text',
         timestamp       => 'float',
+        last_updated    => 'integer',
     },
     indexes => {
         priority        => { columns => [qw/priority line_index/] },
@@ -46,7 +47,8 @@ sub class_label_plural { plugin->translate('Shops') }
 
 sub save {
     my $self = shift;
-    $self->timestamp(time);
+    my $ts = shift || time;
+    $self->last_updated($ts);
     $self->SUPER::save(@_);
 }
 
@@ -135,7 +137,7 @@ sub cleanup {
     my ( $before ) = @_;
 
     # Remove expried shops
-    $pkg->remove({ timestamp => { '<' => $before }});
+    $pkg->remove({ last_updated => { '<' => $before }});
 
     # Single masters
     MT->model('shopsearch_prefecture')->cleanup_as_single_master;
@@ -203,6 +205,17 @@ sub sync_from_tsv {
         print STDERR $msg, " at $ln\n";
     };
 
+    MT->model($_)->cache_preload foreach qw(
+        shopsearch_brand
+        shopsearch_category
+        shopsearch_prefecture
+        shopsearch_tenant
+    );
+
+    my %shops = map {
+        $_->key => $_
+    } MT->model('shopsearch_shop')->load;
+
     my $line_num = 1;
     for my $line ( @lines ) {
         $line_num++;
@@ -267,13 +280,13 @@ sub sync_from_tsv {
         $values{line_index} = $line_num;
 
         # Shop Object
-        my $shop = MT->model('shopsearch_shop')->ensure($key);
+        my $shop = $shops{$key} || MT->model('shopsearch_shop')->ensure($key);
         $shop->set_values(\%values);
 
         # Masters
         $shop->tenant($tenant);
         $shop->prefecture($prefecture);
-        $shop->save;
+        $shop->save($ts);
 
         $shop->brands(\@brands);
         $shop->categories(\@categories);

@@ -4,7 +4,7 @@ key: ShopSearch
 author_link: http://www.ideamans.com/
 author_name: ideaman's Inc.
 version: 1.00
-schema_version: 0.21
+schema_version: 0.26
 l10n_class: MT::ShopSearch::L10N
 
 object_types:
