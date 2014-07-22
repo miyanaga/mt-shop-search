@@ -178,7 +178,7 @@ sub ensure {
 sub sync_from_tsv {
     my $pkg = shift;
     my ( $tsv, $no_cleanup ) = @_;
-    my $ts = time;
+    my $ts = int(time);
 
     my %cols = (
         priority        => excel_column_index('A'),
